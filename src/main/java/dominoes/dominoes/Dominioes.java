@@ -23,9 +23,10 @@ public class Dominioes extends Application {
 
         int index = 1;
         for (Tile tile : TileGenerator.generate(6)) {
-            System.out.println("%i - %s".formatted(index++ , tile));
+            System.out.println("%s - %s".formatted(index++ , tile));
         }
 
-//        launch();
+
+        launch();
     }
 }
