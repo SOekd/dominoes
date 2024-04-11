@@ -4,6 +4,7 @@ import dominoes.dominoes.ai.ArtificialIntelligence;
 import dominoes.dominoes.player.Player;
 import dominoes.dominoes.tile.Tile;
 import dominoes.dominoes.tile.TileGenerator;
+import dominoes.dominoes.util.tuple.Pair;
 
 import java.util.*;
 
@@ -41,7 +42,7 @@ public class Game {
         return currentTile.getAvailableSide();
     }
 
-    private boolean turn;
+    private Player turn;
 
     public void init() {
         var generatedTiles = TileGenerator.generate(layout.getSize());
@@ -52,45 +53,53 @@ public class Game {
         bot = new Player(generateHand());
 
         turn = getFirstPlayer();
-        // true = vez do player
-        // false = bot
-        if (!turn) {
+        if (turn == player) {
+
+        }else{
 
         }
 
     }
 
-    public void play(Tile tile) {
-
-        if (turn) {
-            turn =
+    public boolean placeTile(Tile tile, GameDirection gameDirection) {
+        if(tiles.isEmpty()){
+            tiles.add(tile);
+            return true;
         }
+
+        Tile right = tiles.peekFirst();
+        Tile left = tiles.peekLast();
+
+
+
+
+
 
     }
 
 
-    private Player getFirstPlayer() {
+    private Pair<Player,Tile> getFirstPlayer() {
         Tile doubleBot = player.getHighestDoubleTile();
         Tile doublePlayer = bot.getHighestDoubleTile();
 
         if (doubleBot == null && doublePlayer == null) {
             if (player.getHighestTile().getWeight() >= bot.getHighestTile().getWeight()) {
-                return player;
+                return Pair.of(player,player.getHighestTile());
             } else {
-                return bot;
+                return Pair.of(bot,bot.getHighestTile());
             }
         }
 
         if (doubleBot == null)
-            return player;
+            return Pair.of(player,player.getHighestDoubleTile());
 
         if (doublePlayer == null)
-            return bot;
+            return Pair.of(bot,bot.getHighestDoubleTile());
 
         if (doublePlayer.getWeight() >= doubleBot.getWeight()) {
-            return player;
+            return Pair.of(player,player.getHighestDoubleTile());
         } else {
-            return bot;
+            return Pair.of(bot,bot.getHighestDoubleTile());
         }
     }
 

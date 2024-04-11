@@ -8,7 +8,7 @@ public class Tile {
 
     private final int right;
 
-    private int fit;
+    private Integer fit;
 
     public Tile(int left, int right) {
         this.left = left;
@@ -31,11 +31,13 @@ public class Tile {
         this.fit = fit;
     }
 
-    public int getAvailableSide() {
+    public Integer getAvailableSide() {
         if (fit == right)
             return left;
-        else
+        else if(fit == left)
             return right;
+        else
+            return null;
     }
 
     public int getWeight() {
