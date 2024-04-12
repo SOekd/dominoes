@@ -4,11 +4,9 @@ import java.util.Objects;
 
 public class Tile {
 
-    private final int left;
+    private int left;
 
-    private final int right;
-
-    private Integer fit;
+    private int right;
 
     public Tile(int left, int right) {
         this.left = left;
@@ -23,21 +21,10 @@ public class Tile {
         return right;
     }
 
-    public int getFit() {
-        return fit;
-    }
-
-    public void setFit(int fit) {
-        this.fit = fit;
-    }
-
-    public Integer getAvailableSide() {
-        if (fit == right)
-            return left;
-        else if(fit == left)
-            return right;
-        else
-            return null;
+    public void invert() {
+        int temp = left;
+        left = right;
+        right = temp;
     }
 
     public int getWeight() {
@@ -60,6 +47,7 @@ public class Tile {
     public int hashCode() {
         return Objects.hash(left, right);
     }
+
 
     @Override
     public String toString() {

@@ -1,5 +1,9 @@
 package dominoes.dominoes;
 
+import dominoes.dominoes.ai.ArtificialIntelligence;
+import dominoes.dominoes.ai.ArtificialIntelligenceType;
+import dominoes.dominoes.game.Game;
+import dominoes.dominoes.game.GameLayout;
 import dominoes.dominoes.tile.Tile;
 import dominoes.dominoes.tile.TileGenerator;
 import javafx.application.Application;
@@ -21,12 +25,19 @@ public class Dominioes extends Application {
 
     public static void main(String[] args) {
 
-        int index = 1;
-        for (Tile tile : TileGenerator.generate(6)) {
-            System.out.println("%s - %s".formatted(index++ , tile));
-        }
+//        int index = 1;
+//        for (Tile tile : TileGenerator.generate(6)) {
+//            System.out.println("%s - %s".formatted(index++ , tile));
+//        }
+//        launch();
+
+        Game game = new Game(GameLayout.DOUBLE_SIX, ArtificialIntelligenceType.RANDOM.getArtificialIntelligence());
+
+        game.init();
+
+        game.render();
 
 
-        launch();
+
     }
 }

@@ -12,4 +12,6 @@ module dominoes.dominoes {
     opens dominoes.dominoes.ui.main to javafx.fxml;
     exports dominoes.dominoes.tile;
     opens dominoes.dominoes.tile to javafx.fxml;
+    exports dominoes.dominoes.ai;
+    opens dominoes.dominoes.ai to javafx.fxml;
 }

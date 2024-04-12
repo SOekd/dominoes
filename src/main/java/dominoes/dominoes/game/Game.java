@@ -24,25 +24,8 @@ public class Game {
         this.artificialIntelligence = artificialIntelligence;
     }
 
-    public int getCurrentRightTile() {
-        Tile currentTile = tiles.peek();
 
-        if (currentTile == null)
-            return -1;
-
-        return currentTile.getAvailableSide();
-    }
-
-    public int getCurrentLeftTile() {
-        Tile currentTile = tiles.element();
-
-        if (currentTile == null)
-            return -1;
-
-        return currentTile.getAvailableSide();
-    }
-
-    private Player turn;
+    private boolean turn;
 
     public void init() {
         var generatedTiles = TileGenerator.generate(layout.getSize());
@@ -52,55 +35,103 @@ public class Game {
         player = new Player(generateHand());
         bot = new Player(generateHand());
 
-        turn = getFirstPlayer();
-        if (turn == player) {
+        var firstPlayerInformation = getFirstPlayer();
 
-        }else{
+        var firstTile = firstPlayerInformation.getRight();
+        var firstPlayer = firstPlayerInformation.getLeft();
 
-        }
+        turn = firstPlayer.equals(player);
+
+        placeTile(firstPlayer, firstTile, GameDirection.RIGHT);
+
+        turn = !turn;
 
     }
 
-    public boolean placeTile(Tile tile, GameDirection gameDirection) {
-        if(tiles.isEmpty()){
+
+    public boolean placeTile(Player currentPlayer, Tile tile, GameDirection gameDirection) {
+
+        if (currentPlayer == bot && turn)
+            return false;
+
+        if (currentPlayer == player && !turn)
+            return false;
+
+        if (tiles.isEmpty()) {
             tiles.add(tile);
             return true;
         }
 
-        Tile right = tiles.peekFirst();
-        Tile left = tiles.peekLast();
+        Tile acceptTile = gameDirection == GameDirection.RIGHT ? tiles.peekFirst() : tiles.peekLast();
+
+        if (gameDirection == GameDirection.RIGHT) {
+            if (acceptTile.getRight() == tile.getRight()) {
+                tile.invert();
+                tiles.add(tile);
+                return true;
+            } else if (acceptTile.getRight() == tile.getLeft()) {
+                tiles.add(tile);
+                return true;
+            }
+            return false;
+        }
 
 
+        if (gameDirection == GameDirection.LEFT) {
+            if (acceptTile.getLeft() == tile.getLeft()) {
+                tile.invert();
+                tiles.add(tile);
+                return true;
+            } else if (acceptTile.getLeft() == tile.getRight()) {
+                tiles.add(tile);
+                return true;
+            }
+            return false;
+        }
 
-
-
-
+        return false;
     }
 
 
-    private Pair<Player,Tile> getFirstPlayer() {
+    private Pair<Player, Tile> getFirstPlayer() {
         Tile doubleBot = player.getHighestDoubleTile();
         Tile doublePlayer = bot.getHighestDoubleTile();
 
+        System.out.println("Player TIle: " + doublePlayer);
+        System.out.println("Bot TIle: " + doubleBot);
+
         if (doubleBot == null && doublePlayer == null) {
             if (player.getHighestTile().getWeight() >= bot.getHighestTile().getWeight()) {
-                return Pair.of(player,player.getHighestTile());
+                return Pair.of(player, player.getHighestTile());
             } else {
-                return Pair.of(bot,bot.getHighestTile());
+                return Pair.of(bot, bot.getHighestTile());
             }
         }
 
         if (doubleBot == null)
-            return Pair.of(player,player.getHighestDoubleTile());
+            return Pair.of(player, player.getHighestDoubleTile());
 
         if (doublePlayer == null)
-            return Pair.of(bot,bot.getHighestDoubleTile());
+            return Pair.of(bot, bot.getHighestDoubleTile());
+
 
         if (doublePlayer.getWeight() >= doubleBot.getWeight()) {
-            return Pair.of(player,player.getHighestDoubleTile());
+            return Pair.of(player, doublePlayer);
         } else {
-            return Pair.of(bot,bot.getHighestDoubleTile());
+            return Pair.of(bot, doubleBot);
         }
+    }
+
+    public void render() {
+
+        System.out.println("Vez atual: " + (turn ? "PLAYER" : "BOT"));
+
+        tiles.forEach(tile -> System.out.printf("-| %s . %s |-", tile.getLeft(), tile.getRight()));
+
+        System.out.println("\n");
+
+        System.out.println("Suas peças:");
+        player.getHand().forEach(tile -> System.out.printf("-| %s . %s |-", tile.getLeft(), tile.getRight()));
     }
 
     private List<Tile> generateHand() {
@@ -111,4 +142,15 @@ public class Game {
         return hand;
     }
 
+    public boolean buy(Player player) {
+        if (availableTiles.isEmpty())
+            return false;
+
+        player.getHand().add(availableTiles.poll());
+        return true;
+    }
+
+    public Deque<Tile> getTiles() {
+        return tiles;
+    }
 }
