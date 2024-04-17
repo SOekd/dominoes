@@ -1,5 +1,6 @@
 package dominoes.dominoes.game;
 
+import com.google.common.eventbus.EventBus;
 import dominoes.dominoes.ai.ArtificialIntelligence;
 import dominoes.dominoes.player.Player;
 import dominoes.dominoes.tile.Tile;
@@ -13,6 +14,8 @@ public class Game {
     private final Deque<Tile> tiles = new ArrayDeque<>();
     private final Queue<Tile> availableTiles = new LinkedList<>();
     private final GameLayout layout;
+
+    private final EventBus eventBus = new EventBus();
 
     private final ArtificialIntelligence artificialIntelligence;
 
@@ -45,9 +48,15 @@ public class Game {
         placeTile(firstPlayer, firstTile, GameDirection.RIGHT);
 
         turn = !turn;
+    }
+
+    private void changeTurn() {
 
     }
 
+    public boolean isFinished() {
+        return player.getHand().isEmpty() || bot.getHand().isEmpty();
+    }
 
     public boolean placeTile(Player currentPlayer, Tile tile, GameDirection gameDirection) {
 
@@ -123,7 +132,6 @@ public class Game {
     }
 
     public void render() {
-
         System.out.println("Vez atual: " + (turn ? "PLAYER" : "BOT"));
 
         tiles.forEach(tile -> System.out.printf("-| %s . %s |-", tile.getLeft(), tile.getRight()));
@@ -152,5 +160,9 @@ public class Game {
 
     public Deque<Tile> getTiles() {
         return tiles;
+    }
+
+    public EventBus getEventBus() {
+        return eventBus;
     }
 }

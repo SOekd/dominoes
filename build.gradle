@@ -39,6 +39,7 @@ dependencies {
     implementation('org.kordamp.bootstrapfx:bootstrapfx-core:0.4.0')
 
     implementation("org.jetbrains:annotations:24.1.0")
+    implementation("com.google.guava:guava:33.1.0-jre")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")

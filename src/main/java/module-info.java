@@ -3,9 +3,11 @@ module dominoes.dominoes {
     requires javafx.fxml;
     requires javafx.web;
     requires org.jetbrains.annotations;
-
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
+    requires com.google.common;
+
+
     opens dominoes.dominoes to javafx.fxml;
     exports dominoes.dominoes;
     exports dominoes.dominoes.ui.main;
