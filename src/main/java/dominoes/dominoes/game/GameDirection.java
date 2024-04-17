@@ -2,6 +2,6 @@ package dominoes.dominoes.game;
 
 public enum GameDirection {
 
-    RIGHT, LEFT;
+    RIGHT, LEFT
 
 }

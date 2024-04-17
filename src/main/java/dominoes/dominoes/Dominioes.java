@@ -14,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Scanner;
 
 public class Dominioes extends Application {
     @Override
@@ -35,10 +36,52 @@ public class Dominioes extends Application {
 
         Game game = new Game(GameLayout.DOUBLE_SIX, ArtificialIntelligenceType.RANDOM.getArtificialIntelligence());
 
+        game.setTurnChange((changedGame, player) -> {
+
+            game.render();
+
+            try (var scanner = new Scanner(System.in)) {
+                while (true) {
+
+                    var nextMoves = game.nextMoves(player);
+
+                    if (nextMoves.isEmpty()) {
+                        System.out.println("Você não tem jogadas possíveis! Tentando comprar...");
+
+                        while ((nextMoves = game.nextMoves(player)).isEmpty()) {
+                            if (!game.buy(player))
+                                break;
+                        }
+
+                        if (nextMoves.isEmpty()) {
+                            System.out.println("Você não tem jogadas possíveis e não pode comprar! Passando a vez...");
+                            game.changeTurn();
+                            break;
+                        }
+
+                        continue;
+                    }
+
+                    System.out.println("\nSua vez! Coloque o ID da peça que deseja jogar:");
+                    int tileIndex = scanner.nextInt() - 1;
+
+                    if (tileIndex < 0 || tileIndex >= player.getHand().size()) {
+                        System.out.println("Não existe peça com esse ID");
+                        continue;
+                    }
+
+
+                    Tile tile = player.getHand().get(tileIndex);
+                    System.out.println("Next Tile: " + tile);
+                }
+
+            }
+
+        });
+
         game.init();
 
         game.render();
-
 
 
     }

@@ -1,6 +1,5 @@
 package dominoes.dominoes.game;
 
-import com.google.common.eventbus.EventBus;
 import dominoes.dominoes.ai.ArtificialIntelligence;
 import dominoes.dominoes.player.Player;
 import dominoes.dominoes.tile.Tile;
@@ -8,6 +7,8 @@ import dominoes.dominoes.tile.TileGenerator;
 import dominoes.dominoes.util.tuple.Pair;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiConsumer;
 
 public class Game {
 
@@ -15,9 +16,10 @@ public class Game {
     private final Queue<Tile> availableTiles = new LinkedList<>();
     private final GameLayout layout;
 
-    private final EventBus eventBus = new EventBus();
 
     private final ArtificialIntelligence artificialIntelligence;
+
+    private BiConsumer<Game, Player> onTurnChange = null;
 
     private Player player;
     private Player bot;
@@ -45,17 +47,35 @@ public class Game {
 
         turn = firstPlayer.equals(player);
 
+
+        System.out.println("First Tile: " + firstTile);
+
         placeTile(firstPlayer, firstTile, GameDirection.RIGHT);
 
-        turn = !turn;
+        changeTurn();
     }
 
-    private void changeTurn() {
+    public void changeTurn() {
+        turn = !turn;
 
+        if (onTurnChange != null && isPlayerTurn())
+            onTurnChange.accept(this, player);
+
+        if (isBotTurn()) {
+            artificialIntelligence.nextMove(this, bot);
+        }
     }
 
     public boolean isFinished() {
         return player.getHand().isEmpty() || bot.getHand().isEmpty();
+    }
+
+    private boolean isPlayerTurn() {
+        return turn;
+    }
+
+    private boolean isBotTurn() {
+        return !turn;
     }
 
     public boolean placeTile(Player currentPlayer, Tile tile, GameDirection gameDirection) {
@@ -101,32 +121,71 @@ public class Game {
         return false;
     }
 
+    public void setTurnChange(BiConsumer<Game, Player> onTurnChange) {
+        this.onTurnChange = onTurnChange;
+    }
+
+    public List<Pair<Tile, GameDirection>> nextMoves(Player player) {
+        List<Pair<Tile, GameDirection>> moves = new ArrayList<>();
+
+        for (Tile tile : player.getHand()) {
+
+            Tile firstTile = tiles.peekFirst();
+            Tile lastTile = tiles.peekLast();
+
+            if (firstTile.getLeft() == tile.getLeft() || firstTile.getLeft() == tile.getRight()) {
+                moves.add(Pair.of(tile, GameDirection.LEFT));
+            }
+
+            if (firstTile.getRight() == tile.getLeft() || firstTile.getRight() == tile.getRight()) {
+                moves.add(Pair.of(tile, GameDirection.RIGHT));
+            }
+
+            if (lastTile.getLeft() == tile.getLeft() || lastTile.getLeft() == tile.getRight()) {
+                moves.add(Pair.of(tile, GameDirection.LEFT));
+            }
+
+            if (lastTile.getRight() == tile.getLeft() || lastTile.getRight() == tile.getRight()) {
+                moves.add(Pair.of(tile, GameDirection.RIGHT));
+            }
+        }
+
+        return moves;
+    }
 
     private Pair<Player, Tile> getFirstPlayer() {
-        Tile doubleBot = player.getHighestDoubleTile();
-        Tile doublePlayer = bot.getHighestDoubleTile();
+        Tile doubleBot = bot.getHighestDoubleTile();
+        Tile doublePlayer = player.getHighestDoubleTile();
 
-        System.out.println("Player TIle: " + doublePlayer);
-        System.out.println("Bot TIle: " + doubleBot);
+        System.out.println("Double Bot: " + doubleBot);
+        System.out.println("Double Player: " + doublePlayer);
 
         if (doubleBot == null && doublePlayer == null) {
             if (player.getHighestTile().getWeight() >= bot.getHighestTile().getWeight()) {
+                System.out.println("Player tem a maior peça");
                 return Pair.of(player, player.getHighestTile());
             } else {
+                System.out.println("Bot tem a maior peça");
                 return Pair.of(bot, bot.getHighestTile());
             }
         }
 
-        if (doubleBot == null)
+        if (doubleBot == null) {
+            System.out.println("Bot tem a maior peça2");
             return Pair.of(player, player.getHighestDoubleTile());
+        }
 
-        if (doublePlayer == null)
+        if (doublePlayer == null) {
+            System.out.println("Player tem a maior peça2");
             return Pair.of(bot, bot.getHighestDoubleTile());
+        }
 
 
         if (doublePlayer.getWeight() >= doubleBot.getWeight()) {
+            System.out.println("Player tem a maior peça3");
             return Pair.of(player, doublePlayer);
         } else {
+            System.out.println("Bot tem a maior peça3");
             return Pair.of(bot, doubleBot);
         }
     }
@@ -139,7 +198,9 @@ public class Game {
         System.out.println("\n");
 
         System.out.println("Suas peças:");
-        player.getHand().forEach(tile -> System.out.printf("-| %s . %s |-", tile.getLeft(), tile.getRight()));
+
+        AtomicInteger index = new AtomicInteger(1);
+        player.getHand().forEach(tile -> System.out.printf("-| %s . %s (id: %s) |-", tile.getLeft(), tile.getRight(), index.getAndIncrement()));
     }
 
     private List<Tile> generateHand() {
@@ -162,7 +223,4 @@ public class Game {
         return tiles;
     }
 
-    public EventBus getEventBus() {
-        return eventBus;
-    }
 }
