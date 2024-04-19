@@ -5,6 +5,7 @@ import com.google.common.eventbus.Subscribe;
 import dominoes.dominoes.ai.ArtificialIntelligence;
 import dominoes.dominoes.ai.ArtificialIntelligenceType;
 import dominoes.dominoes.game.Game;
+import dominoes.dominoes.game.GameDirection;
 import dominoes.dominoes.game.GameLayout;
 import dominoes.dominoes.tile.Tile;
 import dominoes.dominoes.tile.TileGenerator;
@@ -34,7 +35,7 @@ public class Dominioes extends Application {
 //        }
 //        launch();
 
-        Game game = new Game(GameLayout.DOUBLE_SIX, ArtificialIntelligenceType.RANDOM.getArtificialIntelligence());
+        Game game = new Game(GameLayout.DOUBLE_SIX, ArtificialIntelligenceType.SEARCH.getArtificialIntelligence());
 
         game.setTurnChange((changedGame, player) -> {
 
@@ -46,7 +47,7 @@ public class Dominioes extends Application {
                     var nextMoves = game.nextMoves(player);
 
                     if (nextMoves.isEmpty()) {
-                        System.out.println("Você não tem jogadas possíveis! Tentando comprar...");
+                        System.out.println("\nVocê não tem jogadas possíveis! Tentando comprar...");
 
                         while ((nextMoves = game.nextMoves(player)).isEmpty()) {
                             if (!game.buy(player))
@@ -59,8 +60,14 @@ public class Dominioes extends Application {
                             break;
                         }
 
+                        game.render();
                         continue;
                     }
+
+                    System.out.println("\nPróximas jogadas possíveis: " + nextMoves.stream()
+                            .map(pair -> pair.getLeft() + " - " + pair.getRight())
+                            .reduce((s1, s2) -> s1 + ", " + s2)
+                            .orElse(""));
 
                     System.out.println("\nSua vez! Coloque o ID da peça que deseja jogar:");
                     int tileIndex = scanner.nextInt() - 1;
@@ -70,9 +77,18 @@ public class Dominioes extends Application {
                         continue;
                     }
 
-
                     Tile tile = player.getHand().get(tileIndex);
                     System.out.println("Next Tile: " + tile);
+
+                    System.out.println("Escolha a direção da peça: 1 - Esquerda, 2 - Direita");
+                    int direction = scanner.nextInt();
+
+                    if (!game.placeTile(player, tile, direction == 1 ? GameDirection.LEFT : GameDirection.RIGHT)) {
+                        System.out.println("Jogada inválida! Tente novamente");
+                        continue;
+                    }
+                    game.changeTurn();
+                    break;
                 }
 
             }

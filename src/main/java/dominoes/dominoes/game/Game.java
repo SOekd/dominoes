@@ -16,7 +16,6 @@ public class Game {
     private final Queue<Tile> availableTiles = new LinkedList<>();
     private final GameLayout layout;
 
-
     private final ArtificialIntelligence artificialIntelligence;
 
     private BiConsumer<Game, Player> onTurnChange = null;
@@ -58,6 +57,13 @@ public class Game {
     public void changeTurn() {
         turn = !turn;
 
+        if (isFinished()) {
+            var winner = player.getHand().isEmpty() ? player : bot;
+
+            System.out.println("O vencedor é: " + winner);
+            return;
+        }
+
         if (onTurnChange != null && isPlayerTurn())
             onTurnChange.accept(this, player);
 
@@ -88,18 +94,21 @@ public class Game {
 
         if (tiles.isEmpty()) {
             tiles.add(tile);
+            currentPlayer.getHand().remove(tile);
             return true;
         }
 
-        Tile acceptTile = gameDirection == GameDirection.RIGHT ? tiles.peekFirst() : tiles.peekLast();
+        Tile acceptTile = gameDirection == GameDirection.LEFT ? tiles.peekFirst() : tiles.peekLast();
 
         if (gameDirection == GameDirection.RIGHT) {
             if (acceptTile.getRight() == tile.getRight()) {
                 tile.invert();
-                tiles.add(tile);
+                tiles.addLast(tile);
+                currentPlayer.getHand().remove(tile);
                 return true;
             } else if (acceptTile.getRight() == tile.getLeft()) {
-                tiles.add(tile);
+                tiles.addLast(tile);
+                currentPlayer.getHand().remove(tile);
                 return true;
             }
             return false;
@@ -109,10 +118,12 @@ public class Game {
         if (gameDirection == GameDirection.LEFT) {
             if (acceptTile.getLeft() == tile.getLeft()) {
                 tile.invert();
-                tiles.add(tile);
+                tiles.addFirst(tile);
+                currentPlayer.getHand().remove(tile);
                 return true;
             } else if (acceptTile.getLeft() == tile.getRight()) {
-                tiles.add(tile);
+                tiles.addFirst(tile);
+                currentPlayer.getHand().remove(tile);
                 return true;
             }
             return false;
@@ -128,10 +139,15 @@ public class Game {
     public List<Pair<Tile, GameDirection>> nextMoves(Player player) {
         List<Pair<Tile, GameDirection>> moves = new ArrayList<>();
 
+        Tile firstTile = tiles.peekFirst();
+        System.out.println();
+        System.out.println("First Tile: " + firstTile);
+        System.out.println("Last Tile: " + tiles.peekLast());
+
+        Tile lastTile = tiles.peekLast();
+
         for (Tile tile : player.getHand()) {
 
-            Tile firstTile = tiles.peekFirst();
-            Tile lastTile = tiles.peekLast();
 
             if (firstTile.getLeft() == tile.getLeft() || firstTile.getLeft() == tile.getRight()) {
                 moves.add(Pair.of(tile, GameDirection.LEFT));
@@ -157,35 +173,27 @@ public class Game {
         Tile doubleBot = bot.getHighestDoubleTile();
         Tile doublePlayer = player.getHighestDoubleTile();
 
-        System.out.println("Double Bot: " + doubleBot);
-        System.out.println("Double Player: " + doublePlayer);
 
         if (doubleBot == null && doublePlayer == null) {
             if (player.getHighestTile().getWeight() >= bot.getHighestTile().getWeight()) {
-                System.out.println("Player tem a maior peça");
                 return Pair.of(player, player.getHighestTile());
             } else {
-                System.out.println("Bot tem a maior peça");
                 return Pair.of(bot, bot.getHighestTile());
             }
         }
 
         if (doubleBot == null) {
-            System.out.println("Bot tem a maior peça2");
             return Pair.of(player, player.getHighestDoubleTile());
         }
 
         if (doublePlayer == null) {
-            System.out.println("Player tem a maior peça2");
             return Pair.of(bot, bot.getHighestDoubleTile());
         }
 
 
         if (doublePlayer.getWeight() >= doubleBot.getWeight()) {
-            System.out.println("Player tem a maior peça3");
             return Pair.of(player, doublePlayer);
         } else {
-            System.out.println("Bot tem a maior peça3");
             return Pair.of(bot, doubleBot);
         }
     }
@@ -221,6 +229,10 @@ public class Game {
 
     public Deque<Tile> getTiles() {
         return tiles;
+    }
+
+    public GameLayout getLayout() {
+        return layout;
     }
 
 }

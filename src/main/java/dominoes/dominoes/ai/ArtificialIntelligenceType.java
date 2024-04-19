@@ -1,17 +1,19 @@
 package dominoes.dominoes.ai;
 
 import dominoes.dominoes.ai.impl.RandomBasedArtificialIntelligence;
+import dominoes.dominoes.ai.impl.SearchBasedArtificialIntelligence;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
 public enum ArtificialIntelligenceType {
 
-    RANDOM(RandomBasedArtificialIntelligence.class);
+    RANDOM(RandomBasedArtificialIntelligence.class),
+    SEARCH(SearchBasedArtificialIntelligence.class);
 
-    private final Class<RandomBasedArtificialIntelligence> intelligenceClass;
+    private final Class<? extends ArtificialIntelligence> intelligenceClass;
 
-    ArtificialIntelligenceType(Class<RandomBasedArtificialIntelligence> intelligenceClass) {
+    ArtificialIntelligenceType(Class<? extends ArtificialIntelligence> intelligenceClass) {
         this.intelligenceClass = intelligenceClass;
     }
 
