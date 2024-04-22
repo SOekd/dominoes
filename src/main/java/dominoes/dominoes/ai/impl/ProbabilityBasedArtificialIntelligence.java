@@ -20,16 +20,11 @@ public class ProbabilityBasedArtificialIntelligence implements ArtificialIntelli
         var move = getMove(game, player);
 
         if (move != null) {
-            System.out.printf("O BOT jogou: -| %s . %s |-- na %s %n",
+            System.out.printf("O BOT jogou: -| %s . %s |- na %s %n",
                     move.getLeft().getLeft(),
                     move.getLeft().getRight(),
                     move.getRight() == GameDirection.RIGHT ? "direita" : "esquerda");
             game.placeTile(player, move.getLeft(), move.getRight());
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
         }
 
         game.changeTurn();

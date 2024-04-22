@@ -58,11 +58,13 @@ public class Game {
         if (isFinished()) {
             var winner = player.getHand().isEmpty() ? "PLAYER" : "BOT";
             System.out.println("O vencedor é: " + winner);
+            System.exit(0);
             return false;
         }
 
         if (tied()) {
             System.out.println("Empate!");
+            System.exit(0);
             return false;
         }
 
