@@ -1,6 +1,7 @@
 package dominoes.dominoes.game;
 
 import dominoes.dominoes.ai.ArtificialIntelligence;
+import dominoes.dominoes.ai.ArtificialIntelligenceType;
 import dominoes.dominoes.player.Player;
 import dominoes.dominoes.tile.Tile;
 import dominoes.dominoes.tile.TileGenerator;
@@ -151,15 +152,12 @@ public class Game {
 
         Tile firstTile = tiles.peekFirst();
         Tile lastTile = tiles.peekLast();
-        System.out.println();
 
         for (Tile tile : player.getHand()) {
-
 
             if (firstTile.getLeft() == tile.getLeft() || firstTile.getLeft() == tile.getRight()) {
                 moves.add(Pair.of(tile, GameDirection.LEFT));
             }
-
 
             if (lastTile.getRight() == tile.getLeft() || lastTile.getRight() == tile.getRight()) {
                 moves.add(Pair.of(tile, GameDirection.RIGHT));

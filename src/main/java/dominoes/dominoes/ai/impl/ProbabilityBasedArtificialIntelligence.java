@@ -32,21 +32,73 @@ public class ProbabilityBasedArtificialIntelligence implements ArtificialIntelli
 
     private Map<Integer, Long> calculateNumberFrequency(Game game) {
         return game.getTiles().stream()
-                .flatMap(tile -> Stream.of(tile.getLeft(), tile.getRight()))
+                .flatMap(tile -> tile.getLeft() == tile.getRight() ?
+                        Stream.of(tile.getRight())
+                        : Stream.of(tile.getLeft(), tile.getRight()))
                 .collect(Collectors.groupingBy(number -> number, Collectors.counting()));
     }
 
-    private Pair<Tile, GameDirection> findBestMove(List<Pair<Tile, GameDirection>> nextMoves, Map<Integer, Long> numberFrequency) {
+    private Pair<Tile, GameDirection> findBestMove(Game game, List<Pair<Tile, GameDirection>> nextMoves, Map<Integer, Long> numberFrequency) {
         Pair<Tile, GameDirection> bestMove = null;
         long bestScore = Long.MAX_VALUE;
 
+        numberFrequency.forEach((key, value) -> System.out.println(key + " - " + value));
+
+//        System.out.println("Next Moves: ");
+//        nextMoves.forEach(System.out::println);
+//
+//        System.out.println("Played Moves:");
+//        game.getTiles().forEach(System.out::println);
+
+//        5 0
+//        5 1
+//        5 2
+//        5 3
+//        5 4
+//        5 5
+//        5 6
+
+
         for (Pair<Tile, GameDirection> move : nextMoves) {
             Tile tile = move.getLeft();
-            long score = numberFrequency.getOrDefault(tile.getLeft(), 0L) + numberFrequency.getOrDefault(tile.getRight(), 0L);
+            long score = 0;
+
+            var direction = move.getRight();
+            if (direction == GameDirection.RIGHT) {
+                var scoreTile = game.getTiles().peekLast();
+
+                if (scoreTile.getRight() == tile.getRight()) {
+                    score = numberFrequency.getOrDefault(tile.getRight(), 0L);
+                }
+
+                if (scoreTile.getRight() == tile.getLeft()) {
+                    score = numberFrequency.getOrDefault(tile.getLeft(), 0L);
+                }
+
+            }
+
+            if (direction == GameDirection.LEFT) {
+                var scoreTile = game.getTiles().peekFirst();
+
+                if (scoreTile.getLeft() == tile.getRight()) {
+                    score = numberFrequency.getOrDefault(tile.getRight(), 0L);
+                }
+
+                if (scoreTile.getLeft() == tile.getLeft()) {
+                    score = numberFrequency.getOrDefault(tile.getLeft(), 0L);
+                }
+
+            }
 
             if (bestMove == null || score < bestScore) {
+
                 bestMove = move;
                 bestScore = score;
+
+//                System.out.println();
+//                System.out.println("Move: " + bestMove);
+//                System.out.println("SCore: " + score);
+//                System.out.println("Best SCore: " + bestScore);
             }
         }
 
@@ -71,7 +123,7 @@ public class ProbabilityBasedArtificialIntelligence implements ArtificialIntelli
 
         }
 
-        return findBestMove(nextMoves, calculateNumberFrequency(game));
+        return findBestMove(game, nextMoves, calculateNumberFrequency(game));
     }
 
 }
