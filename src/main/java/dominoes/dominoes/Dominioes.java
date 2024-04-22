@@ -1,14 +1,10 @@
 package dominoes.dominoes;
 
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-import dominoes.dominoes.ai.ArtificialIntelligence;
 import dominoes.dominoes.ai.ArtificialIntelligenceType;
 import dominoes.dominoes.game.Game;
 import dominoes.dominoes.game.GameDirection;
 import dominoes.dominoes.game.GameLayout;
 import dominoes.dominoes.tile.Tile;
-import dominoes.dominoes.tile.TileGenerator;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -64,10 +60,10 @@ public class Dominioes extends Application {
                         continue;
                     }
 
-                    System.out.println("\nPróximas jogadas possíveis: " + nextMoves.stream()
-                            .map(pair -> pair.getLeft() + " - " + pair.getRight())
-                            .reduce((s1, s2) -> s1 + ", " + s2)
-                            .orElse(""));
+//                    System.out.println("\nPróximas jogadas possíveis: " + nextMoves.stream()
+//                            .map(pair -> pair.getLeft() + " - " + pair.getRight())
+//                            .reduce((s1, s2) -> s1 + ", " + s2)
+//                            .orElse(""));
 
                     System.out.println("\nSua vez! Coloque o ID da peça que deseja jogar:");
                     int tileIndex = scanner.nextInt() - 1;
@@ -87,6 +83,8 @@ public class Dominioes extends Application {
                         System.out.println("Jogada inválida! Tente novamente");
                         continue;
                     }
+
+                    System.out.println("change 1");
                     game.changeTurn();
                     break;
                 }
@@ -96,10 +94,6 @@ public class Dominioes extends Application {
         });
 
         game.init();
-
-        game.render();
-
-
     }
 
 }

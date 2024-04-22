@@ -47,21 +47,23 @@ public class Game {
         turn = firstPlayer.equals(player);
 
 
-        System.out.println("First Tile: " + firstTile);
-
         placeTile(firstPlayer, firstTile, GameDirection.RIGHT);
 
         changeTurn();
     }
 
-    public void changeTurn() {
+    public boolean changeTurn() {
         turn = !turn;
 
         if (isFinished()) {
-            var winner = player.getHand().isEmpty() ? player : bot;
-
+            var winner = player.getHand().isEmpty() ? "PLAYER" : "BOT";
             System.out.println("O vencedor é: " + winner);
-            return;
+            return false;
+        }
+
+        if (tied()) {
+            System.out.println("Empate!");
+            return false;
         }
 
         if (onTurnChange != null && isPlayerTurn())
@@ -70,6 +72,8 @@ public class Game {
         if (isBotTurn()) {
             artificialIntelligence.nextMove(this, bot);
         }
+
+        return true;
     }
 
     public boolean isFinished() {
@@ -136,15 +140,16 @@ public class Game {
         this.onTurnChange = onTurnChange;
     }
 
+    public boolean tied() {
+        return nextMoves(player).isEmpty() && nextMoves(bot).isEmpty() && availableTiles.isEmpty();
+    }
+
     public List<Pair<Tile, GameDirection>> nextMoves(Player player) {
         List<Pair<Tile, GameDirection>> moves = new ArrayList<>();
 
         Tile firstTile = tiles.peekFirst();
-        System.out.println();
-        System.out.println("First Tile: " + firstTile);
-        System.out.println("Last Tile: " + tiles.peekLast());
-
         Tile lastTile = tiles.peekLast();
+        System.out.println();
 
         for (Tile tile : player.getHand()) {
 
@@ -153,17 +158,11 @@ public class Game {
                 moves.add(Pair.of(tile, GameDirection.LEFT));
             }
 
-            if (firstTile.getRight() == tile.getLeft() || firstTile.getRight() == tile.getRight()) {
-                moves.add(Pair.of(tile, GameDirection.RIGHT));
-            }
-
-            if (lastTile.getLeft() == tile.getLeft() || lastTile.getLeft() == tile.getRight()) {
-                moves.add(Pair.of(tile, GameDirection.LEFT));
-            }
 
             if (lastTile.getRight() == tile.getLeft() || lastTile.getRight() == tile.getRight()) {
                 moves.add(Pair.of(tile, GameDirection.RIGHT));
             }
+
         }
 
         return moves;
@@ -200,6 +199,7 @@ public class Game {
 
     public void render() {
         System.out.println("Vez atual: " + (turn ? "PLAYER" : "BOT"));
+        System.out.println("Itens na Loja: " + availableTiles.size());
 
         tiles.forEach(tile -> System.out.printf("-| %s . %s |-", tile.getLeft(), tile.getRight()));
 
