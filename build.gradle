@@ -36,10 +36,21 @@ javafx {
 
 dependencies {
     implementation('org.kordamp.ikonli:ikonli-javafx:12.3.1')
-    implementation('org.kordamp.bootstrapfx:bootstrapfx-core:0.4.0')
+    implementation('org.kordamp.ikonli:ikonli-feather-pack:12.3.1')
+    implementation('org.kordamp.ikonli:ikonli-material2-pack:12.3.1')
     implementation 'io.github.mkpaz:atlantafx-base:2.0.1'
     implementation("org.jetbrains:annotations:24.1.0")
     implementation("com.google.guava:guava:33.1.0-jre")
+
+//            <dependency>
+//            <groupId>org.kordamp.ikonli</groupId>
+//            <artifactId>ikonli-javafx</artifactId>
+//            </dependency>
+//        <dependency>
+//            <groupId>org.kordamp.ikonli</groupId>
+//    <artifactId>ikonli-feather-pack</artifactId>
+//        </dependency>
+
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")

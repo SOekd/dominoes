@@ -1,14 +1,12 @@
 package dominoes.dominoes.game;
 
 import dominoes.dominoes.ai.ArtificialIntelligence;
-import dominoes.dominoes.ai.ArtificialIntelligenceType;
 import dominoes.dominoes.player.Player;
 import dominoes.dominoes.tile.Tile;
 import dominoes.dominoes.tile.TileGenerator;
 import dominoes.dominoes.util.tuple.Pair;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 
 public class Game {
@@ -19,7 +17,7 @@ public class Game {
 
     private final ArtificialIntelligence artificialIntelligence;
 
-    private BiConsumer<Game, Player> onTurnChange = null;
+    private final BiConsumer<Game, Player> onTurnChange = null;
 
     private Player player;
     private Player bot;
@@ -28,7 +26,6 @@ public class Game {
         this.layout = layout;
         this.artificialIntelligence = artificialIntelligence;
     }
-
 
     private boolean turn;
 
@@ -59,13 +56,11 @@ public class Game {
         if (isFinished()) {
             var winner = player.getHand().isEmpty() ? "PLAYER" : "BOT";
             System.out.println("O vencedor é: " + winner);
-            System.exit(0);
             return false;
         }
 
         if (tied()) {
             System.out.println("Empate!");
-            System.exit(0);
             return false;
         }
 
@@ -139,10 +134,6 @@ public class Game {
         return false;
     }
 
-    public void setTurnChange(BiConsumer<Game, Player> onTurnChange) {
-        this.onTurnChange = onTurnChange;
-    }
-
     public boolean tied() {
         return nextMoves(player).isEmpty() && nextMoves(bot).isEmpty() && availableTiles.isEmpty();
     }
@@ -197,20 +188,6 @@ public class Game {
         }
     }
 
-    public void render() {
-        System.out.println("Vez atual: " + (turn ? "PLAYER" : "BOT"));
-        System.out.println("Itens na Loja: " + availableTiles.size());
-
-        tiles.forEach(tile -> System.out.printf("-| %s . %s |-", tile.getLeft(), tile.getRight()));
-
-        System.out.println("\n");
-
-        System.out.println("Suas peças:");
-
-        AtomicInteger index = new AtomicInteger(1);
-        player.getHand().forEach(tile -> System.out.printf("-| %s . %s (id: %s) |-", tile.getLeft(), tile.getRight(), index.getAndIncrement()));
-    }
-
     private List<Tile> generateHand() {
         List<Tile> hand = new ArrayList<>();
         for (int i = 0; i < layout.getHand(); i++) {
@@ -227,12 +204,16 @@ public class Game {
         return true;
     }
 
-    public Deque<Tile> getTiles() {
-        return tiles;
+    public Player getPlayer() {
+        return player;
     }
 
-    public GameLayout getLayout() {
-        return layout;
+    public Player getBot() {
+        return bot;
+    }
+
+    public Deque<Tile> getTiles() {
+        return tiles;
     }
 
 }
