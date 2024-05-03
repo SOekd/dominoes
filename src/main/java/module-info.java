@@ -23,4 +23,8 @@ module dominoes.dominoes {
     opens dominoes.dominoes.ui.cards to javafx.fxml;
     exports dominoes.dominoes.game;
     opens dominoes.dominoes.game to javafx.fxml;
+    exports dominoes.dominoes.player;
+    opens dominoes.dominoes.player to javafx.fxml;
+    exports dominoes.dominoes.util.tuple;
+    opens dominoes.dominoes.util.tuple to javafx.fxml;
 }

@@ -1,29 +1,41 @@
 package dominoes.dominoes.ui.views;
 
+import atlantafx.base.controls.Notification;
+import atlantafx.base.theme.Styles;
+import atlantafx.base.util.Animations;
 import dominoes.dominoes.ai.ArtificialIntelligenceType;
+import dominoes.dominoes.game.EndGameState;
 import dominoes.dominoes.game.Game;
 import dominoes.dominoes.game.GameDirection;
 import dominoes.dominoes.game.GameLayout;
 import dominoes.dominoes.tile.Tile;
+import dominoes.dominoes.ui.cards.BlackTileCard;
 import dominoes.dominoes.ui.cards.PhantomTileCard;
 import dominoes.dominoes.ui.cards.TileCard;
 import dominoes.dominoes.ui.handlers.BoundsHandler;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
+import org.kordamp.ikonli.javafx.FontIcon;
+import org.kordamp.ikonli.material2.Material2OutlinedAL;
 
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class GameView extends Scene {
+
+    private static final ScheduledExecutorService SCHEDULER = Executors.newSingleThreadScheduledExecutor();
+
     private final HBox playerHand = new HBox();
     private final HBox botHand = new HBox();
     private final ScrollPane board = new ScrollPane();
@@ -108,6 +120,70 @@ public class GameView extends Scene {
         this.setRoot(root);
 
         game = new Game(GameLayout.DOUBLE_SIX, ArtificialIntelligenceType.SEARCH.getArtificialIntelligence());
+        game.getArtificialIntelligence().setListener((game, move) -> {
+
+            Notification wait = new Notification("""
+                    O Bot está pensando! Aguarde!
+                    """,
+                    new FontIcon(Material2OutlinedAL.GAMES)
+            );
+
+            wait.getStyleClass().addAll(
+                    Styles.ACCENT, Styles.ELEVATED_1
+            );
+            wait.setPrefHeight(Region.USE_PREF_SIZE);
+            wait.setMaxHeight(Region.USE_PREF_SIZE);
+            StackPane.setAlignment(wait, Pos.TOP_RIGHT);
+            StackPane.setMargin(wait, new Insets(10, 10, 0, 0));
+
+            Platform.runLater(() -> {
+                var in1 = Animations.slideInDown(wait, Duration.millis(250));
+                if (!root.getChildren().contains(wait)) {
+                    root.getChildren().add(wait);
+                }
+                in1.playFromStart();
+            });
+
+            SCHEDULER.schedule(() -> {
+
+                Platform.runLater(() -> {
+                    if (move != null) {
+                        var tile = move.getLeft();
+                        var direction = move.getRight();
+                        wait.setMessage("""
+                                O BOT fez seu movimento!
+                                                            
+                                Jogou %s - %s na %s
+                                """.formatted(tile.getRight(), tile.getLeft(), direction == GameDirection.RIGHT ? "Direita" : "Esquerda"));
+                    } else {
+                        wait.setMessage("O BOT passou a vez!");
+                    }
+
+                });
+                if (move != null) {
+                    System.out.printf("O BOT jogou: -| %s . %s |- na %s %n",
+                            move.getLeft().getLeft(),
+                            move.getLeft().getRight(),
+                            move.getRight() == GameDirection.RIGHT ? "direita" : "esquerda");
+                    game.placeTile(game.getBot(), move.getLeft(), move.getRight());
+                }
+
+                System.out.println("SCHEDULE!!!");
+
+                SCHEDULER.schedule(() -> {
+                    Platform.runLater(() -> {
+                        System.out.println(" REMVOE TEST ");
+                        root.getChildren().forEach(it -> System.out.println(it.getClass()));
+                        root.getChildren().remove(wait);
+                        System.out.println("AFTER");
+                        root.getChildren().forEach(it -> System.out.println(it.getClass()));
+                        System.out.println("REMOVED");
+                        game.changeTurn();
+                    });
+                }, 2, TimeUnit.SECONDS);
+
+            }, 2, TimeUnit.SECONDS);
+        });
         game.init();
 
         boardItems.getChildren().addFirst(leftPhantomTile);
@@ -132,7 +208,10 @@ public class GameView extends Scene {
     }
 
     public void update() {
-
+        if (game.getEndGameState() == EndGameState.BOT_WIN) {
+            viewManager.setScoreView(new ScoreView(this.getWidth(), this.getHeight(), viewManager, game.getEndGameState()));
+            viewManager.changeToScore();
+        }
         playerHand.getChildren().clear();
         boardItems.getChildren().clear();
         botHand.getChildren().clear();
@@ -144,7 +223,7 @@ public class GameView extends Scene {
         }
 
         for (int i = 0; i < game.getBot().getHand().size(); i++) {
-            botHand.getChildren().add(new TileCard(game.getBot().getHand().get(i), false));
+            botHand.getChildren().add(new BlackTileCard());
         }
 
         List<Tile> boardTile = game.getTiles().stream().toList();
@@ -194,15 +273,19 @@ public class GameView extends Scene {
                 if (BoundsHandler.checkIntersection(mouseBounds, leftPhantomTile)) {
                     System.out.println("Esquerda");
                     if (game.placeTile(game.getPlayer(), tileCard.getTile(), GameDirection.LEFT)) {
-                        if(!game.changeTurn()){
-
+                        if (!game.changeTurn()) {
+                            viewManager.setScoreView(new ScoreView(this.getWidth(), this.getHeight(), viewManager, game.getEndGameState()));
+                            viewManager.changeToScore();
                         }
                         update();
                     }
                 } else if (BoundsHandler.checkIntersection(mouseBounds, rightPhantomTile)) {
                     System.out.println("Direita");
                     if (game.placeTile(game.getPlayer(), tileCard.getTile(), GameDirection.RIGHT)) {
-                        game.changeTurn();
+                        if (!game.changeTurn()) {
+                            viewManager.setScoreView(new ScoreView(this.getWidth(), this.getHeight(), viewManager, game.getEndGameState()));
+                            viewManager.changeToScore();
+                        }
                         update();
                     }
                 }

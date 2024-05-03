@@ -1,6 +1,5 @@
 package dominoes.dominoes.ai;
 
-import dominoes.dominoes.ai.impl.RandomBasedArtificialIntelligence;
 import dominoes.dominoes.ai.impl.ProbabilityBasedArtificialIntelligence;
 
 import java.lang.reflect.InvocationTargetException;
@@ -8,7 +7,6 @@ import java.util.Arrays;
 
 public enum ArtificialIntelligenceType {
 
-    RANDOM(RandomBasedArtificialIntelligence.class),
     SEARCH(ProbabilityBasedArtificialIntelligence.class);
 
     private final Class<? extends ArtificialIntelligence> intelligenceClass;

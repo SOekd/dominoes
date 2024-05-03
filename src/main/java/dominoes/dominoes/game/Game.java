@@ -22,6 +22,8 @@ public class Game {
     private Player player;
     private Player bot;
 
+    private EndGameState endGameState = null;
+
     public Game(GameLayout layout, ArtificialIntelligence artificialIntelligence) {
         this.layout = layout;
         this.artificialIntelligence = artificialIntelligence;
@@ -56,11 +58,17 @@ public class Game {
         if (isFinished()) {
             var winner = player.getHand().isEmpty() ? "PLAYER" : "BOT";
             System.out.println("O vencedor é: " + winner);
+            if(player.getHand().isEmpty()){
+                endGameState = EndGameState.PLAYER_WIN;
+            }else{
+                endGameState = EndGameState.BOT_WIN;
+            }
             return false;
         }
 
         if (tied()) {
             System.out.println("Empate!");
+            endGameState = EndGameState.TIE;
             return false;
         }
 
@@ -84,6 +92,10 @@ public class Game {
 
     private boolean isBotTurn() {
         return !turn;
+    }
+
+    public ArtificialIntelligence getArtificialIntelligence() {
+        return artificialIntelligence;
     }
 
     public boolean placeTile(Player currentPlayer, Tile tile, GameDirection gameDirection) {
@@ -216,4 +228,7 @@ public class Game {
         return tiles;
     }
 
+    public EndGameState getEndGameState() {
+        return endGameState;
+    }
 }

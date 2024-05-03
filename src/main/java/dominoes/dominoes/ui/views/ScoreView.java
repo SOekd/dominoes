@@ -34,6 +34,7 @@ public class ScoreView extends Scene {
         VBox background = new VBox();
 
         optionsContainer.getChildren().add(playButton);
+        optionsContainer.getChildren().add(menuButton);
         background.getChildren().add(title);
         background.getChildren().add(optionsContainer);
 
@@ -60,6 +61,13 @@ public class ScoreView extends Scene {
 
         root.getChildren().add(background);
         this.setRoot(root);
+
+        playButton.setOnAction(event -> {
+            viewManager.setGameScene(new GameView(screenWidth, screenHeight, viewManager));
+            viewManager.changeToGame();
+        });
+
+        menuButton.setOnAction(event -> viewManager.changeToMenu());
 
 
     }

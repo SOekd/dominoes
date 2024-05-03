@@ -9,25 +9,26 @@ import dominoes.dominoes.util.tuple.Pair;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ProbabilityBasedArtificialIntelligence implements ArtificialIntelligence {
+
+    private BiConsumer<Game, Pair<Tile, GameDirection>> listener = null;
 
     @Override
     public void nextMove(Game game, Player player) {
 
         var move = getMove(game, player);
 
-        if (move != null) {
-            System.out.printf("O BOT jogou: -| %s . %s |- na %s %n",
-                    move.getLeft().getLeft(),
-                    move.getLeft().getRight(),
-                    move.getRight() == GameDirection.RIGHT ? "direita" : "esquerda");
-            game.placeTile(player, move.getLeft(), move.getRight());
-        }
+        if (listener != null)
+            listener.accept(game, move);
+    }
 
-        game.changeTurn();
+    @Override
+    public void setListener(BiConsumer<Game, Pair<Tile, GameDirection>>  listener) {
+        this.listener = listener;
     }
 
     private Map<Integer, Long> calculateNumberFrequency(Game game) {
