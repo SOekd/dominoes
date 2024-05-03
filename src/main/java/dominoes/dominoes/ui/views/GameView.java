@@ -166,6 +166,8 @@ public class GameView extends Scene {
                             move.getLeft().getRight(),
                             move.getRight() == GameDirection.RIGHT ? "direita" : "esquerda");
                     game.placeTile(game.getBot(), move.getLeft(), move.getRight());
+                    game.changeTurn();
+                    Platform.runLater(this::update);
                 }
 
                 System.out.println("SCHEDULE!!!");
@@ -178,7 +180,6 @@ public class GameView extends Scene {
                         System.out.println("AFTER");
                         root.getChildren().forEach(it -> System.out.println(it.getClass()));
                         System.out.println("REMOVED");
-                        game.changeTurn();
                     });
                 }, 2, TimeUnit.SECONDS);
 
@@ -186,8 +187,8 @@ public class GameView extends Scene {
         });
         game.init();
 
-        boardItems.getChildren().addFirst(leftPhantomTile);
-        boardItems.getChildren().addLast(rightPhantomTile);
+        boardItems.getChildren().add(0, leftPhantomTile);
+        boardItems.getChildren().add(rightPhantomTile);
 
         leftPhantomTile.setVisible(false);
         rightPhantomTile.setVisible(false);
@@ -236,8 +237,10 @@ public class GameView extends Scene {
         }
         boardItems.getChildren().remove(leftPhantomTile);
         boardItems.getChildren().remove(rightPhantomTile);
-        boardItems.getChildren().addFirst(leftPhantomTile);
-        boardItems.getChildren().addLast(rightPhantomTile);
+//        boardItems.getChildren().addFirst(leftPhantomTile);
+//        boardItems.getChildren().addLast(rightPhantomTile);
+        boardItems.getChildren().add(0, leftPhantomTile);
+        boardItems.getChildren().add(rightPhantomTile);
     }
 
     public void makeDraggable(TileCard tileCard) {

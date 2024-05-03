@@ -25,6 +25,7 @@ public class Dominioes extends Application {
         viewManager.setMenuScene(menuView);
 
         stage.setTitle("Dominó!");
+        stage.setResizable(false);
         viewManager.changeToMenu();
     }
 

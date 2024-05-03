@@ -26,10 +26,11 @@ public class ViewManager extends Parent {
         stage.show();
     }
 
-    public void changeToScore(){
+    public void changeToScore() {
         stage.setScene(scoreView);
         stage.show();
     }
+
     public void close() {
         stage.close();
     }
@@ -42,7 +43,9 @@ public class ViewManager extends Parent {
         this.gameScene = gameScene;
     }
 
-    public void setScoreView(ScoreView scoreView) {this.scoreView = scoreView;}
+    public void setScoreView(ScoreView scoreView) {
+        this.scoreView = scoreView;
+    }
 
     @Override
     public Node getStyleableNode() {
