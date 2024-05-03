@@ -5,7 +5,6 @@ module dominoes.dominoes {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.ikonli.feather;
     requires org.kordamp.ikonli.material2;
-    requires com.google.common;
     requires atlantafx.base;
 
 
