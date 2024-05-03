@@ -7,9 +7,7 @@ import dominoes.dominoes.ui.views.ViewManager;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-
-public class Dominioes extends Application {
+public class Dominoes extends Application {
 
     private static final double screenWidth = 800;
     private static final double screenHeight = 600;
