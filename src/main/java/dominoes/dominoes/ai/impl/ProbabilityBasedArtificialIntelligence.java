@@ -33,8 +33,8 @@ public class ProbabilityBasedArtificialIntelligence implements ArtificialIntelli
         this.listener = listener;
     }
 
-    private Map<Integer, Long> calculateNumberFrequency(Game game) {
-        return game.getTiles().stream()
+    private Map<Integer, Long> calculateNumberFrequency(Game game, Player player) {
+        return Stream.concat(game.getTiles().stream(), player.getHand().stream())
                 .flatMap(tile -> tile.getLeft() == tile.getRight() ?
                         Stream.of(tile.getRight())
                         : Stream.of(tile.getLeft(), tile.getRight()))
@@ -116,7 +116,7 @@ public class ProbabilityBasedArtificialIntelligence implements ArtificialIntelli
 
         }
 
-        return findBestMove(game, nextMoves, calculateNumberFrequency(game));
+        return findBestMove(game, nextMoves, calculateNumberFrequency(game, player));
     }
 
 }

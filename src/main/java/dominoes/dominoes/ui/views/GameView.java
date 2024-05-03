@@ -209,10 +209,12 @@ public class GameView extends Scene {
     }
 
     public void update() {
-        if (game.getEndGameState() == EndGameState.BOT_WIN) {
+        if (game.getEndGameState() == EndGameState.BOT_WIN || game.getEndGameState() == EndGameState.TIE) {
             viewManager.setScoreView(new ScoreView(this.getWidth(), this.getHeight(), viewManager, game.getEndGameState()));
             viewManager.changeToScore();
         }
+
+
         playerHand.getChildren().clear();
         boardItems.getChildren().clear();
         botHand.getChildren().clear();
