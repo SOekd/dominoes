@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 
 public class GameView extends Scene {
 
-    private static final ScheduledExecutorService SCHEDULER = Executors.newSingleThreadScheduledExecutor();
+    private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(3);
 
     private final HBox playerHand = new HBox();
     private final HBox botHand = new HBox();
@@ -58,14 +58,17 @@ public class GameView extends Scene {
 
         Button menuButton = new Button();
         Button buyButton = new Button();
+        Button skipButton = new Button();
 
         menuButton.setText("Sair");
         buyButton.setText("Comprar");
+        skipButton.setText("Pular a Vez");
 
         HBox header = new HBox();
 
         header.getChildren().add(menuButton);
         header.getChildren().add(buyButton);
+        header.getChildren().add(skipButton);
 
         board.setContent(boardItems);
         board.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -81,6 +84,7 @@ public class GameView extends Scene {
         boardItems.setAlignment(Pos.CENTER);
         menuButton.setAlignment(Pos.CENTER);
         buyButton.setAlignment(Pos.CENTER);
+        skipButton.setAlignment(Pos.CENTER);
 
         playerHand.setPrefHeight(screenHeight / 4);
         botHand.setPrefHeight(screenHeight / 4);
@@ -93,6 +97,7 @@ public class GameView extends Scene {
 
         menuButton.setPrefSize(100, 20);
         buyButton.setPrefSize(100, 20);
+        skipButton.setPrefSize(100, 20);
         header.setPrefSize(screenWidth, 40);
         header.setAlignment(Pos.CENTER);
 
@@ -102,6 +107,7 @@ public class GameView extends Scene {
         board.setBackground(Background.fill(Paint.valueOf("#A1EFA7")));
         menuButton.setBackground(Background.fill(Paint.valueOf("#F04933")));
         buyButton.setBackground(Background.fill(Paint.valueOf("#3E49F0")));
+        skipButton.setBackground(Background.fill(Paint.valueOf("#2E79F0")));
 
         Insets padding = new Insets(10, 10, 10, 10);
 
@@ -196,8 +202,69 @@ public class GameView extends Scene {
         menuButton.setOnAction(event -> viewManager.changeToMenu());
 
         buyButton.setOnAction(event -> {
-            game.buy(game.getPlayer());
-            update();
+
+            if (game.nextMoves(game.getPlayer()).isEmpty()) {
+                game.buy(game.getPlayer());
+                update();
+                return;
+            }
+
+            Notification buy = new Notification("""
+                    Você não pode comprar uma peça!
+                    
+                    Ainda existem jogadas disponíveis!
+                    """,
+                    new FontIcon(Material2OutlinedAL.GAMES)
+            );
+
+            buy.getStyleClass().addAll(
+                    Styles.ACCENT, Styles.ELEVATED_1
+            );
+
+            buy.setPrefHeight(Region.USE_PREF_SIZE);
+            buy.setMaxHeight(Region.USE_PREF_SIZE);
+
+            StackPane.setAlignment(buy, Pos.TOP_RIGHT);
+
+            root.getChildren().add(buy);
+
+            SCHEDULER.schedule(() -> Platform.runLater(() -> {
+                root.getChildren().remove(buy);
+            }), 2, TimeUnit.SECONDS);
+        });
+
+        skipButton.setOnAction(event -> {
+
+            if (game.nextMoves(game.getPlayer()).isEmpty() && game.getAvailableTiles().isEmpty()) {
+                game.changeTurn();
+                update();
+                return;
+            }
+
+            Notification skip = new Notification("""
+                    Você tem jogadas disponíveis!
+                    
+                    Que tal comprar uma peça?
+                    """,
+                    new FontIcon(Material2OutlinedAL.GAMES)
+            );
+
+            skip.getStyleClass().addAll(
+                    Styles.ACCENT, Styles.ELEVATED_1
+            );
+
+            skip.setPrefHeight(Region.USE_PREF_SIZE);
+            skip.setMaxHeight(Region.USE_PREF_SIZE);
+
+            StackPane.setAlignment(skip, Pos.TOP_RIGHT);
+
+            root.getChildren().add(skip);
+
+            SCHEDULER.schedule(() -> Platform.runLater(() -> {
+                System.out.println(" REMVOE TEST ");
+                root.getChildren().remove(skip);
+            }), 2, TimeUnit.SECONDS);
+
         });
 
         this.board.setOnMouseDragged(e -> {

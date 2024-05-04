@@ -228,6 +228,10 @@ public class Game {
         return tiles;
     }
 
+    public Queue<Tile> getAvailableTiles() {
+        return availableTiles;
+    }
+
     public EndGameState getEndGameState() {
         return endGameState;
     }
