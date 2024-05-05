@@ -50,6 +50,14 @@ public class GameView extends Scene {
     private double mouseX;
     private double mouseY;
 
+    private static final String HAND_STYLE = """
+            -fx-border-color: #8B4513;
+            -fx-border-width: 6;
+            -fx-border-radius: 10;
+            -fx-background-radius: 10;
+            -fx-background-color: #193326;
+    """;
+
     public GameView(double screenWidth, double screenHeight, ViewManager viewManager) {
         super(viewManager, screenWidth, screenHeight);
         this.viewManager = viewManager;
@@ -101,13 +109,15 @@ public class GameView extends Scene {
         header.setPrefSize(screenWidth, 40);
         header.setAlignment(Pos.CENTER);
 
-        background.setBackground(Background.fill(Paint.valueOf("#A1EFA7")));
-        botHand.setBackground(Background.fill(Paint.valueOf("#41F062")));
-        playerHand.setBackground(Background.fill(Paint.valueOf("#41F062")));
-        board.setBackground(Background.fill(Paint.valueOf("#A1EFA7")));
+        background.setBackground(Background.fill(Paint.valueOf("#247542")));
+        botHand.setBackground(Background.fill(Paint.valueOf("#193326")));
+        board.setBackground(Background.fill(Paint.valueOf("#247542")));
         menuButton.setBackground(Background.fill(Paint.valueOf("#F04933")));
         buyButton.setBackground(Background.fill(Paint.valueOf("#3E49F0")));
         skipButton.setBackground(Background.fill(Paint.valueOf("#2E79F0")));
+
+        playerHand.setStyle(HAND_STYLE);
+        botHand.setStyle(HAND_STYLE);
 
         Insets padding = new Insets(10, 10, 10, 10);
 

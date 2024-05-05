@@ -4,7 +4,6 @@ import dominoes.dominoes.tile.Tile;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
@@ -32,7 +31,10 @@ public class TileCard extends VBox {
             HBox background = new HBox();
             background.setPrefSize(90, 40);
             background.setPadding(new Insets(5, 5, 5, 5));
-            background.setBackground(Background.fill(Paint.valueOf("#FFFFFF")));
+            background.setStyle("""
+                    -fx-background-color: #FFFFFF;
+                    -fx-background-radius: 10;
+            """);
             separator.setHeight(30);
             separator.setWidth(3);
 
@@ -47,7 +49,10 @@ public class TileCard extends VBox {
             VBox background = new VBox();
             background.setPrefSize(40, 90);
             background.setPadding(new Insets(5, 5, 5, 5));
-            background.setBackground(Background.fill(Paint.valueOf("#FFFFFF")));
+            background.setStyle("""
+                    -fx-background-color: #FFFFFF;
+                    -fx-background-radius: 10;
+            """);
             separator.setHeight(3);
             separator.setWidth(30);
 
