@@ -9,7 +9,6 @@ on:
       - master
 
 permissions: write-all
-
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -41,12 +40,12 @@ jobs:
         if: matrix.os != 'windows-latest'
         run: |
           mkdir -p ./build/artifacts
-          cp ./build/jpackage/* ./build/artifacts/
+          cp -r ./build/jpackage/* ./build/artifacts/
         shell: bash
       - name: Prepare artifacts (Windows)
         if: matrix.os == 'windows-latest'
         run: |
-          mkdir -p build\artifacts
+          mkdir build\artifacts
           copy build\jpackage\* build\artifacts\
         shell: cmd
       - name: Release
