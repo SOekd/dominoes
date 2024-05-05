@@ -8,73 +8,29 @@ on:
     branches:
       - master
 
-permissions:
-  contents: write
-
+permissions: write-all
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        include:
-          - os: ubuntu-latest
-            platform: linux
-          - os: windows-latest
-            platform: win
-
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout source code
-        uses: actions/checkout@v2
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
+      - uses: actions/checkout@v3
+      - uses: gradle/wrapper-validation-action@v1
+      - uses: actions/setup-java@v3
         with:
           distribution: temurin
           java-version: 17
-
-      - name: Set up Gradle
-        uses: gradle/gradle-build-action@v2
-
-      - name: Extract Version
-        id: extract_version
-        run: |
-          VERSION=$(./gradlew properties -q | grep "version:" | awk '{print $2}')
-          echo "VERSION=${VERSION}" >> $GITHUB_ENV
-
-      - name: Build with Gradle
+      - name: Configure Git
+        run: git config --global user.email "action@github.com" && git config --global user.name "Github Action"
+      - name: Set outputs
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - name: Build
         run: ./gradlew jlinkZip --info --stacktrace
-        env:
-          JAVA_HOME: ${{ steps.setup-java.outputs.path }}
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+      - name: Release
+        uses: marvinpinto/action-automatic-releases@master
         with:
-          name: app-${{ matrix.platform }}
-          path: build/distributions/app-${{ matrix.platform }}.zip
-
-  release:
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Download Linux Artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: app-linux
-          path: dist/
-
-      - name: Download Windows Artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: app-win
-          path: dist/
-
-      - name: Create Release
-        uses: marvinpinto/action-automatic-releases@latest
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          tag_name: v${{ env.VERSION }}
-          release_name: v${{ env.VERSION }}
-          files: |
-            dist/app-linux.zip
-            dist/app-win.zip
+          title: "Dominoes ${{ steps.vars.outputs.sha_short }}"
+          automatic_release_tag: "${{ steps.vars.outputs.sha_short }}"
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          files: "./build/distributions/app-*.zip"
+          prerelease: false

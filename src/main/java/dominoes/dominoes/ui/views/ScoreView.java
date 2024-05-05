@@ -1,6 +1,7 @@
 package dominoes.dominoes.ui.views;
 
 import dominoes.dominoes.game.EndGameState;
+import dominoes.dominoes.game.Game;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -13,7 +14,8 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 
 public class ScoreView extends Scene {
-    public ScoreView(double screenWidth, double screenHeight, ViewManager viewManager, EndGameState endGameState) {
+
+    public ScoreView(Game game, double screenWidth, double screenHeight, ViewManager viewManager, EndGameState endGameState) {
         super(viewManager, screenWidth, screenHeight);
 
         Button playButton = new Button();
@@ -28,7 +30,20 @@ public class ScoreView extends Scene {
         } else if (endGameState.equals(EndGameState.PLAYER_WIN)) {
             title.setText("VITORIA");
         } else {
-            title.setText("EMPATE");
+            int playerWin = game.getPlayer().getHand().stream()
+                    .mapToInt(tile -> tile.getLeft() + tile.getRight())
+                    .sum();
+            int botWin = game.getBot().getHand().stream()
+                    .mapToInt(tile -> tile.getLeft() + tile.getRight())
+                    .sum();
+
+            if (playerWin > botWin) {
+                title.setText("VITORIA POR PONTUAÇÃO: " + playerWin + " x " + botWin);
+            } else if (playerWin < botWin) {
+                title.setText("DERROTA POR PONTUAÇÃO: " + playerWin + " x " + botWin);
+            } else {
+                title.setText("EMPATE");
+            }
         }
         Group root = new Group();
         VBox background = new VBox();
