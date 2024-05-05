@@ -277,7 +277,7 @@ public class GameView extends Scene {
 
     public void update() {
         if (game.getEndGameState() == EndGameState.BOT_WIN || game.getEndGameState() == EndGameState.TIE) {
-            viewManager.setScoreView(new ScoreView(this.getWidth(), this.getHeight(), viewManager, game.getEndGameState()));
+            viewManager.setScoreView(new ScoreView(game, this.getWidth(), this.getHeight(), viewManager, game.getEndGameState()));
             viewManager.changeToScore();
         }
 
@@ -346,7 +346,7 @@ public class GameView extends Scene {
                     System.out.println("Esquerda");
                     if (game.placeTile(game.getPlayer(), tileCard.getTile(), GameDirection.LEFT)) {
                         if (!game.changeTurn()) {
-                            viewManager.setScoreView(new ScoreView(this.getWidth(), this.getHeight(), viewManager, game.getEndGameState()));
+                            viewManager.setScoreView(new ScoreView(game, this.getWidth(), this.getHeight(), viewManager, game.getEndGameState()));
                             viewManager.changeToScore();
                         }
                         update();
@@ -355,7 +355,7 @@ public class GameView extends Scene {
                     System.out.println("Direita");
                     if (game.placeTile(game.getPlayer(), tileCard.getTile(), GameDirection.RIGHT)) {
                         if (!game.changeTurn()) {
-                            viewManager.setScoreView(new ScoreView(this.getWidth(), this.getHeight(), viewManager, game.getEndGameState()));
+                            viewManager.setScoreView(new ScoreView(game, this.getWidth(), this.getHeight(), viewManager, game.getEndGameState()));
                             viewManager.changeToScore();
                         }
                         update();
