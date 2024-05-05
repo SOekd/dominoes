@@ -9,9 +9,13 @@ on:
       - master
 
 permissions: write-all
+
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     steps:
       - uses: actions/checkout@v3
       - uses: gradle/wrapper-validation-action@v1
@@ -25,12 +29,20 @@ jobs:
         id: vars
         run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       - name: Build
-        run: ./gradlew jlinkZip --info --stacktrace
+        run: |
+          ./gradlew jlinkZip --info --stacktrace
+        shell: bash
+        if: runner.os == 'Linux'
+      - name: Build
+        run: |
+          ./gradlew.bat jlinkZip --info --stacktrace
+        shell: cmd
+        if: runner.os == 'Windows'
       - name: Release
         uses: marvinpinto/action-automatic-releases@master
         with:
           title: "Dominoes ${{ steps.vars.outputs.sha_short }}"
           automatic_release_tag: "${{ steps.vars.outputs.sha_short }}"
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          files: "./build/distributions/app-*.zip"
+          files: "./build/distributions/dominoes-*.zip"
           prerelease: false
