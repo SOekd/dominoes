@@ -10,7 +10,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 
-public class TileCard extends VBox{
+public class TileCard extends VBox {
 
     private final Tile tile;
 
@@ -28,10 +28,10 @@ public class TileCard extends VBox{
         Rectangle separator = new Rectangle();
         separator.setFill(Paint.valueOf("#000000"));
 
-        if(sideways){
+        if (sideways) {
             HBox background = new HBox();
-            background.setPrefSize(90,40);
-            background.setPadding(new Insets(5,5,5,5));
+            background.setPrefSize(90, 40);
+            background.setPadding(new Insets(5, 5, 5, 5));
             background.setBackground(Background.fill(Paint.valueOf("#FFFFFF")));
             separator.setHeight(30);
             separator.setWidth(3);
@@ -43,10 +43,10 @@ public class TileCard extends VBox{
             background.setSpacing(15);
 
             this.getChildren().add(background);
-        }else{
+        } else {
             VBox background = new VBox();
-            background.setPrefSize(40,90);
-            background.setPadding(new Insets(5,5,5,5));
+            background.setPrefSize(40, 90);
+            background.setPadding(new Insets(5, 5, 5, 5));
             background.setBackground(Background.fill(Paint.valueOf("#FFFFFF")));
             separator.setHeight(3);
             separator.setWidth(30);
@@ -60,7 +60,8 @@ public class TileCard extends VBox{
             this.getChildren().add(background);
         }
     }
-    public Tile getTile(){
+
+    public Tile getTile() {
         return tile;
     }
 }

@@ -29,7 +29,7 @@ public class ProbabilityBasedArtificialIntelligence implements ArtificialIntelli
     }
 
     @Override
-    public void setListener(BiConsumer<Game, Pair<Tile, GameDirection>>  listener) {
+    public void setListener(BiConsumer<Game, Pair<Tile, GameDirection>> listener) {
         this.listener = listener;
     }
 

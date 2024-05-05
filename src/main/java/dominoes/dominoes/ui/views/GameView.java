@@ -211,7 +211,7 @@ public class GameView extends Scene {
 
             Notification buy = new Notification("""
                     Você não pode comprar uma peça!
-                    
+                                        
                     Ainda existem jogadas disponíveis!
                     """,
                     new FontIcon(Material2OutlinedAL.GAMES)
@@ -243,7 +243,7 @@ public class GameView extends Scene {
 
             Notification skip = new Notification("""
                     Você tem jogadas disponíveis!
-                    
+                                        
                     Que tal comprar uma peça?
                     """,
                     new FontIcon(Material2OutlinedAL.GAMES)

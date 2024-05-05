@@ -7,7 +7,6 @@ import dominoes.dominoes.tile.Tile;
 import dominoes.dominoes.util.tuple.Pair;
 
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public interface ArtificialIntelligence {
 

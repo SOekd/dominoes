@@ -7,11 +7,13 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 
 public class PhantomTileCard extends VBox {
+
     public PhantomTileCard() {
-            HBox background = new HBox();
-            background.setBorder(Border.stroke(Paint.valueOf("#E0312B")));
-            background.setPrefSize(90,40);
-            this.setAlignment(Pos.CENTER);
-            getChildren().add(background);
+        HBox background = new HBox();
+        background.setBorder(Border.stroke(Paint.valueOf("#E0312B")));
+        background.setPrefSize(90, 40);
+        this.setAlignment(Pos.CENTER);
+        getChildren().add(background);
     }
+
 }

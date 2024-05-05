@@ -7,7 +7,6 @@ import dominoes.dominoes.tile.TileGenerator;
 import dominoes.dominoes.util.tuple.Pair;
 
 import java.util.*;
-import java.util.function.BiConsumer;
 
 public class Game {
 
@@ -16,8 +15,6 @@ public class Game {
     private final GameLayout layout;
 
     private final ArtificialIntelligence artificialIntelligence;
-
-    private final BiConsumer<Game, Player> onTurnChange = null;
 
     private Player player;
     private Player bot;
@@ -57,23 +54,18 @@ public class Game {
 
         if (isFinished()) {
             var winner = player.getHand().isEmpty() ? "PLAYER" : "BOT";
-            System.out.println("O vencedor é: " + winner);
-            if(player.getHand().isEmpty()){
+            if (player.getHand().isEmpty()) {
                 endGameState = EndGameState.PLAYER_WIN;
-            }else{
+            } else {
                 endGameState = EndGameState.BOT_WIN;
             }
             return false;
         }
 
         if (tied()) {
-            System.out.println("Empate!");
             endGameState = EndGameState.TIE;
             return false;
         }
-
-        if (onTurnChange != null && isPlayerTurn())
-            onTurnChange.accept(this, player);
 
         if (isBotTurn()) {
             artificialIntelligence.nextMove(this, bot);

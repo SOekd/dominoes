@@ -23,11 +23,11 @@ public class ScoreView extends Scene {
         VBox optionsContainer = new VBox();
         Label title = new Label();
 
-        if(endGameState.equals(EndGameState.BOT_WIN)){
+        if (endGameState.equals(EndGameState.BOT_WIN)) {
             title.setText("DERROTA");
-        }else if(endGameState.equals(EndGameState.PLAYER_WIN)){
+        } else if (endGameState.equals(EndGameState.PLAYER_WIN)) {
             title.setText("VITORIA");
-        }else{
+        } else {
             title.setText("EMPATE");
         }
         Group root = new Group();

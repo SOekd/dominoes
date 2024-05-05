@@ -13,12 +13,12 @@ public class Dominoes extends Application {
     private static final double screenHeight = 600;
 
     @Override
-    public void start(Stage stage){
+    public void start(Stage stage) {
         Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());
 
         ViewManager viewManager = new ViewManager(stage);
-        MenuView menuView = new MenuView(screenWidth,screenHeight,viewManager);
-        GameView gameView = new GameView(screenWidth,screenHeight,viewManager);
+        MenuView menuView = new MenuView(screenWidth, screenHeight, viewManager);
+        GameView gameView = new GameView(screenWidth, screenHeight, viewManager);
         viewManager.setGameScene(gameView);
         viewManager.setMenuScene(menuView);
 
