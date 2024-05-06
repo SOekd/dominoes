@@ -73,7 +73,7 @@ public class ScoreView extends Scene {
         background.setBackground(Background.fill(Paint.valueOf("#247542")));
         title.setTextFill(Paint.valueOf("#FFFFFF"));
 
-        title.setFont(new Font("Arial", 80));
+        title.setFont(new Font("Arial", endGameState == EndGameState.TIE ? 20 : 60));
 
         optionsContainer.setSpacing(20.0);
         optionsContainer.setPadding(new Insets(10, 10, 10, 10));
