@@ -62,9 +62,15 @@ public class ScoreView extends Scene {
         title.setAlignment(Pos.TOP_CENTER);
         background.setAlignment(Pos.CENTER);
 
-        optionsContainer.setBackground(Background.fill(Paint.valueOf("#41F062")));
+        optionsContainer.setStyle("""
+                -fx-border-color: #8B4513;
+                -fx-border-width: 6;
+                -fx-border-radius: 10;
+                -fx-background-radius: 10;
+                -fx-background-color: #193326;
+        """);
         playButton.setBackground(Background.fill(Paint.valueOf("#3E49F0")));
-        background.setBackground(Background.fill(Paint.valueOf("#A1EFA7")));
+        background.setBackground(Background.fill(Paint.valueOf("#247542")));
         title.setTextFill(Paint.valueOf("#FFFFFF"));
 
         title.setFont(new Font("Arial", 80));
