@@ -1,14 +1,8 @@
-name: Build and Release Dominoes
+name: Gradle Build
 
-on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+on: [push, pull_request]
 
-permissions: write-all
+# https://github.com/beryx-gist/badass-jlink-example-javafx-multiproject/blob/master/.github/workflows/gradle.yml
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -17,42 +11,46 @@ jobs:
         os: [ubuntu-latest, macOS-latest, windows-latest]
         java: [ '17' ]
       fail-fast: false
-    name: Build and Release on ${{ matrix.os }}
+    name: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: gradle/wrapper-validation-action@v1
-      - uses: actions/setup-java@v3
+      - name: Git checkout
+        uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
         with:
-          distribution: temurin
           java-version: ${{ matrix.java }}
-      - name: Configure Git
-        run: git config --global user.email "action@github.com" && git config --global user.name "Github Action"
-      - name: Set outputs
-        id: vars
-        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - name: Echo JAVA_HOME
+        run: echo $JAVA_HOME
+      - name: Verify Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
       - name: Execute build
         run: ./gradlew --info --stacktrace build
       - name: Execute jlink
         run: ./gradlew --info --stacktrace jlink
       - name: Execute jpackage
         run: ./gradlew --info --stacktrace jpackage
-      - name: Prepare artifacts (Linux and macOS)
-        if: matrix.os != 'windows-latest'
-        run: |
-          mkdir -p ./build/artifacts
-          cp -r ./build/jpackage/* ./build/artifacts/
-        shell: bash
-      - name: Prepare artifacts (Windows)
-        if: matrix.os == 'windows-latest'
-        run: |
-          mkdir build\artifacts
-          copy build\jpackage\* build\artifacts\
-        shell: cmd
-      - name: Release
-        uses: marvinpinto/action-automatic-releases@latest
+      - name: Upload DMG as an artifact
+        uses: actions/upload-artifact@v2
         with:
-          title: "Dominoes ${{ steps.vars.outputs.sha_short }}"
-          automatic_release_tag: "${{ steps.vars.outputs.sha_short }}"
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          files: "./build/artifacts/*"
-          prerelease: false
+          name: dominoes-${{ matrix.os }}-dmg
+          path: ./build/jpackage/*.dmg
+      - name: Upload EXE as an artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: dominoes-${{ matrix.os }}-exe
+          path: ./build/jpackage/*.exe
+      - name: Upload MSI as an artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: dominoes-${{ matrix.os }}-msi
+          path: ./build/jpackage/*.msi
+      - name: Upload DEB as an artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: dominoes-${{ matrix.os }}-deb
+          path: ./build/jpackage/*.deb
+      - name: Upload RPM as an artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: dominoes-${{ matrix.os }}-rpm
+          path: ./build/jpackage/*.rpm
