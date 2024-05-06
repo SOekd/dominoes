@@ -54,6 +54,7 @@ public class ScoreView extends Scene {
         background.getChildren().add(optionsContainer);
 
         playButton.setMinWidth(screenWidth / 3);
+        menuButton.setMinWidth(screenWidth / 3);
         background.setPrefSize(screenWidth, screenHeight);
         optionsContainer.setPrefSize((screenWidth / 3) + 20, (screenHeight / 3) + 20);
 

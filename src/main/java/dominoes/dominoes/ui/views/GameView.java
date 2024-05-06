@@ -36,7 +36,8 @@ public class GameView extends Scene {
 
     private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(3);
 
-    private final HBox playerHand = new HBox();
+    private final HBox playerHandItems = new HBox();
+    private final ScrollPane playerHand = new ScrollPane();
     private final HBox botHand = new HBox();
     private final ScrollPane board = new ScrollPane();
 
@@ -82,26 +83,34 @@ public class GameView extends Scene {
         board.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         board.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
+        playerHand.setContent(playerHandItems);
+        playerHand.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        playerHand.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
+
         background.getChildren().add(header);
         background.getChildren().add(botHand);
         background.getChildren().add(board);
         background.getChildren().add(playerHand);
 
-        playerHand.setAlignment(Pos.BOTTOM_CENTER);
+        playerHandItems.setAlignment(Pos.BOTTOM_CENTER);
         botHand.setAlignment(Pos.TOP_CENTER);
         boardItems.setAlignment(Pos.CENTER);
         menuButton.setAlignment(Pos.CENTER);
         buyButton.setAlignment(Pos.CENTER);
         skipButton.setAlignment(Pos.CENTER);
 
-        playerHand.setPrefHeight(screenHeight / 4);
+        playerHandItems.setPrefHeight(screenHeight / 4 - 42);
+        playerHandItems.setMinWidth(screenWidth - 42);
+        playerHandItems.prefWidth(Region.USE_COMPUTED_SIZE);
         botHand.setPrefHeight(screenHeight / 4);
         boardItems.setPrefHeight(screenHeight / 2 - 50);
         boardItems.setMinWidth(screenWidth - 42);
         boardItems.setPrefWidth(Region.USE_COMPUTED_SIZE);
         botHand.setMaxWidth(screenWidth);
-        playerHand.setMaxWidth(screenWidth);
+        playerHandItems.setMaxWidth(screenWidth);
         board.setPrefSize(screenWidth, screenHeight / 2);
+        playerHand.setPrefSize(screenWidth,screenHeight / 4);
 
         menuButton.setPrefSize(100, 20);
         buyButton.setPrefSize(100, 20);
@@ -124,12 +133,12 @@ public class GameView extends Scene {
         header.setPadding(padding);
         background.setPadding(padding);
         botHand.setPadding(padding);
-        playerHand.setPadding(padding);
+        playerHandItems.setPadding(padding);
         this.board.setPadding(padding);
 
         header.setSpacing(10.0);
         botHand.setSpacing(10.0);
-        playerHand.setSpacing(10.0);
+        playerHandItems.setSpacing(10.0);
         boardItems.setSpacing(10.0);
 
         root.getChildren().add(background);
@@ -291,14 +300,13 @@ public class GameView extends Scene {
             viewManager.changeToScore();
         }
 
-
-        playerHand.getChildren().clear();
+        playerHandItems.getChildren().clear();
         boardItems.getChildren().clear();
         botHand.getChildren().clear();
 
         for (int i = 0; i < game.getPlayer().getHand().size(); i++) {
             TileCard tilecard = new TileCard(game.getPlayer().getHand().get(i), false);
-            playerHand.getChildren().add(tilecard);
+            playerHandItems.getChildren().add(tilecard);
             makeDraggable(tilecard);
         }
 
@@ -316,8 +324,6 @@ public class GameView extends Scene {
         }
         boardItems.getChildren().remove(leftPhantomTile);
         boardItems.getChildren().remove(rightPhantomTile);
-//        boardItems.getChildren().addFirst(leftPhantomTile);
-//        boardItems.getChildren().addLast(rightPhantomTile);
         boardItems.getChildren().add(0, leftPhantomTile);
         boardItems.getChildren().add(rightPhantomTile);
     }
