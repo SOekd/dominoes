@@ -36,8 +36,7 @@ public class GameView extends Scene {
 
     private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(3);
 
-    private final HBox playerHandItems = new HBox();
-    private final ScrollPane playerHand = new ScrollPane();
+    private final HBox playerHand = new HBox();
     private final HBox botHand = new HBox();
     private final ScrollPane board = new ScrollPane();
 
@@ -83,32 +82,24 @@ public class GameView extends Scene {
         board.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         board.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-        playerHand.setContent(playerHandItems);
-        playerHand.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        playerHand.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-
-
         background.getChildren().add(header);
         background.getChildren().add(botHand);
         background.getChildren().add(board);
         background.getChildren().add(playerHand);
 
-        playerHandItems.setAlignment(Pos.BOTTOM_CENTER);
+        playerHand.setAlignment(Pos.BOTTOM_CENTER);
         botHand.setAlignment(Pos.TOP_CENTER);
         boardItems.setAlignment(Pos.CENTER);
         menuButton.setAlignment(Pos.CENTER);
         buyButton.setAlignment(Pos.CENTER);
         skipButton.setAlignment(Pos.CENTER);
 
-        playerHandItems.setPrefHeight(screenHeight / 4 - 42);
-        playerHandItems.setMinWidth(screenWidth - 42);
-        playerHandItems.prefWidth(Region.USE_COMPUTED_SIZE);
         botHand.setPrefHeight(screenHeight / 4);
         boardItems.setPrefHeight(screenHeight / 2 - 50);
         boardItems.setMinWidth(screenWidth - 42);
         boardItems.setPrefWidth(Region.USE_COMPUTED_SIZE);
         botHand.setMaxWidth(screenWidth);
-        playerHandItems.setMaxWidth(screenWidth);
+        playerHand.setMaxWidth(screenWidth);
         board.setPrefSize(screenWidth, screenHeight / 2);
         playerHand.setPrefSize(screenWidth,screenHeight / 4);
 
@@ -128,18 +119,20 @@ public class GameView extends Scene {
         playerHand.setStyle(HAND_STYLE);
         botHand.setStyle(HAND_STYLE);
 
+
         Insets padding = new Insets(10, 10, 10, 10);
 
         header.setPadding(padding);
         background.setPadding(padding);
         botHand.setPadding(padding);
-        playerHandItems.setPadding(padding);
+        playerHand.setPadding(padding);
         this.board.setPadding(padding);
 
         header.setSpacing(10.0);
         botHand.setSpacing(10.0);
-        playerHandItems.setSpacing(10.0);
+        playerHand.setSpacing(10.0);
         boardItems.setSpacing(10.0);
+
 
         root.getChildren().add(background);
         this.setRoot(root);
@@ -300,13 +293,13 @@ public class GameView extends Scene {
             viewManager.changeToScore();
         }
 
-        playerHandItems.getChildren().clear();
+        playerHand.getChildren().clear();
         boardItems.getChildren().clear();
         botHand.getChildren().clear();
 
         for (int i = 0; i < game.getPlayer().getHand().size(); i++) {
             TileCard tilecard = new TileCard(game.getPlayer().getHand().get(i), false);
-            playerHandItems.getChildren().add(tilecard);
+            playerHand.getChildren().add(tilecard);
             makeDraggable(tilecard);
         }
 
