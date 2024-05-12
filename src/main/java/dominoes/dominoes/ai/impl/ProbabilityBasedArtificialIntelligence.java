@@ -16,7 +16,6 @@ import java.util.stream.Stream;
 
 public class ProbabilityBasedArtificialIntelligence implements ArtificialIntelligence {
 
-    private static final double COEFFICIENT = 1.2;
 
     private BiConsumer<Game, Pair<Tile, GameDirection>> listener = null;
 
@@ -53,52 +52,41 @@ public class ProbabilityBasedArtificialIntelligence implements ArtificialIntelli
         double bestScore = Double.MAX_VALUE;
 
         System.out.println("Player");
-        var playerFrequency = calculatePlayerNumberFrequency(game, game.getBot());
-        playerFrequency.forEach((key, value) -> System.out.println(key + " - " + value));
+        numberFrequency.forEach((key, value) -> System.out.println(key + " - " + value));
 
         for (Pair<Tile, GameDirection> move : nextMoves) {
             Tile tile = move.getLeft();
             double score = 0.0;
 
             var direction = move.getRight();
-            if (direction == GameDirection.RIGHT) {
-                var scoreTile = game.getTiles().peekLast();
+            Tile scoreTile = (direction == GameDirection.RIGHT) ? game.getTiles().peekLast() : game.getTiles().peekFirst();
+            int tileMatchSide = (direction == GameDirection.RIGHT) ? scoreTile.getRight() : scoreTile.getLeft();
+            int tileOppositeSide = (direction == GameDirection.RIGHT) ? tile.getLeft() : tile.getRight();
 
-                if (scoreTile.getRight() == tile.getRight()) {
-                    score = playerFrequency.getOrDefault(tile.getRight(), 0L)
-                            + playerFrequency.getOrDefault(tile.getLeft(), 0L) * COEFFICIENT;
-                }
-
-                if (scoreTile.getRight() == tile.getLeft()) {
-                    score = playerFrequency.getOrDefault(tile.getLeft(), 0L)
-                            + playerFrequency.getOrDefault(tile.getRight(), 0L) * COEFFICIENT;
-                }
-
+            if (tileMatchSide == tile.getRight()) {
+                score = 1.0 / (numberFrequency.getOrDefault(tile.getRight(), 0L) + 1);
             }
 
-            if (direction == GameDirection.LEFT) {
-                var scoreTile = game.getTiles().peekFirst();
-
-                if (scoreTile.getLeft() == tile.getRight()) {
-                    score = playerFrequency.getOrDefault(tile.getRight(), 0L)
-                            + playerFrequency.getOrDefault(tile.getLeft(), 0L) * COEFFICIENT;
-                }
-
-                if (scoreTile.getLeft() == tile.getLeft()) {
-                    score = playerFrequency.getOrDefault(tile.getLeft(), 0L)
-                            + playerFrequency.getOrDefault(tile.getRight(), 0L) * COEFFICIENT;
-                }
-
+            if (tileMatchSide == tile.getLeft()) {
+                score = 1.0 / (numberFrequency.getOrDefault(tile.getLeft(), 0L) + 1);
             }
 
-            if (bestMove == null || score < bestScore) {
+            if (tileOppositeSide == tile.getRight()) {
+                score += (1.0 / (numberFrequency.getOrDefault(tile.getRight(), 0L) + 1)) ;
+            }
+
+            if (tileOppositeSide == tile.getLeft()) {
+                score += (1.0 / (numberFrequency.getOrDefault(tile.getLeft(), 0L) + 1)) ;
+            }
+
+            if (bestMove == null || score > bestScore) {
+
+                System.out.println("Best move: " + move + " - " + score);
 
                 bestMove = move;
                 bestScore = score;
-
             }
         }
-
         return bestMove;
     }
 
