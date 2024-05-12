@@ -5,6 +5,7 @@ import dominoes.dominoes.game.Game;
 import dominoes.dominoes.game.GameDirection;
 import dominoes.dominoes.player.Player;
 import dominoes.dominoes.tile.Tile;
+import dominoes.dominoes.tile.TileGenerator;
 import dominoes.dominoes.util.tuple.Pair;
 
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.stream.Stream;
 
 public class ProbabilityBasedArtificialIntelligence implements ArtificialIntelligence {
 
-    private static final double COEFFICIENT = 2;
+    private static final double COEFFICIENT = 1.2;
 
     private BiConsumer<Game, Pair<Tile, GameDirection>> listener = null;
 
@@ -33,8 +34,14 @@ public class ProbabilityBasedArtificialIntelligence implements ArtificialIntelli
         this.listener = listener;
     }
 
-    private Map<Integer, Long> calculateNumberFrequency(Game game, Player player) {
-        return Stream.concat(game.getTiles().stream(), player.getHand().stream())
+
+    private Map<Integer, Long> calculatePlayerNumberFrequency(Game game, Player player) {
+        var tiles = TileGenerator.generate(game.getLayout().getSize());
+
+        tiles.removeAll(game.getTiles());
+        tiles.removeAll(player.getHand());
+
+        return tiles.stream()
                 .flatMap(tile -> tile.getLeft() == tile.getRight() ?
                         Stream.of(tile.getRight())
                         : Stream.of(tile.getLeft(), tile.getRight()))
@@ -45,8 +52,9 @@ public class ProbabilityBasedArtificialIntelligence implements ArtificialIntelli
         Pair<Tile, GameDirection> bestMove = null;
         double bestScore = Double.MAX_VALUE;
 
-        numberFrequency.forEach((key, value) -> System.out.println(key + " - " + value));
-
+        System.out.println("Player");
+        var playerFrequency = calculatePlayerNumberFrequency(game, game.getBot());
+        playerFrequency.forEach((key, value) -> System.out.println(key + " - " + value));
 
         for (Pair<Tile, GameDirection> move : nextMoves) {
             Tile tile = move.getLeft();
@@ -57,13 +65,13 @@ public class ProbabilityBasedArtificialIntelligence implements ArtificialIntelli
                 var scoreTile = game.getTiles().peekLast();
 
                 if (scoreTile.getRight() == tile.getRight()) {
-                    score = numberFrequency.getOrDefault(tile.getRight(), 0L) * COEFFICIENT
-                            + numberFrequency.getOrDefault(tile.getLeft(), 0L);
+                    score = playerFrequency.getOrDefault(tile.getRight(), 0L)
+                            + playerFrequency.getOrDefault(tile.getLeft(), 0L) * COEFFICIENT;
                 }
 
                 if (scoreTile.getRight() == tile.getLeft()) {
-                    score = numberFrequency.getOrDefault(tile.getLeft(), 0L) * COEFFICIENT
-                            + numberFrequency.getOrDefault(tile.getRight(), 0L);
+                    score = playerFrequency.getOrDefault(tile.getLeft(), 0L)
+                            + playerFrequency.getOrDefault(tile.getRight(), 0L) * COEFFICIENT;
                 }
 
             }
@@ -72,13 +80,13 @@ public class ProbabilityBasedArtificialIntelligence implements ArtificialIntelli
                 var scoreTile = game.getTiles().peekFirst();
 
                 if (scoreTile.getLeft() == tile.getRight()) {
-                    score = numberFrequency.getOrDefault(tile.getRight(), 0L) * COEFFICIENT
-                            + numberFrequency.getOrDefault(tile.getLeft(), 0L);
+                    score = playerFrequency.getOrDefault(tile.getRight(), 0L)
+                            + playerFrequency.getOrDefault(tile.getLeft(), 0L) * COEFFICIENT;
                 }
 
                 if (scoreTile.getLeft() == tile.getLeft()) {
-                    score = numberFrequency.getOrDefault(tile.getLeft(), 0L) * COEFFICIENT
-                            + numberFrequency.getOrDefault(tile.getRight(), 0L);
+                    score = playerFrequency.getOrDefault(tile.getLeft(), 0L)
+                            + playerFrequency.getOrDefault(tile.getRight(), 0L) * COEFFICIENT;
                 }
 
             }
@@ -88,10 +96,6 @@ public class ProbabilityBasedArtificialIntelligence implements ArtificialIntelli
                 bestMove = move;
                 bestScore = score;
 
-//                System.out.println();
-//                System.out.println("Move: " + bestMove);
-//                System.out.println("SCore: " + score);
-//                System.out.println("Best SCore: " + bestScore);
             }
         }
 
@@ -116,7 +120,7 @@ public class ProbabilityBasedArtificialIntelligence implements ArtificialIntelli
 
         }
 
-        return findBestMove(game, nextMoves, calculateNumberFrequency(game, player));
+        return findBestMove(game, nextMoves, calculatePlayerNumberFrequency(game, player));
     }
 
 }

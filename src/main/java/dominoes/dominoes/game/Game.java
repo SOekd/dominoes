@@ -208,6 +208,10 @@ public class Game {
         return true;
     }
 
+    public GameLayout getLayout() {
+        return layout;
+    }
+
     public Player getPlayer() {
         return player;
     }

@@ -21,7 +21,7 @@ public class MenuView extends Scene {
         Button exitButton = new Button();
         exitButton.setText("Sair");
         VBox optionsContainer = new VBox();
-        Label title = new Label("Dominoes");
+        Label title = new Label("Dominó");
 
         Group root = new Group();
         VBox background = new VBox();

@@ -38,9 +38,9 @@ public class ScoreView extends Scene {
                     .sum();
 
             if (playerWin > botWin) {
-                title.setText("VITORIA POR PONTUAÇÃO: " + playerWin + " x " + botWin);
-            } else if (playerWin < botWin) {
                 title.setText("DERROTA POR PONTUAÇÃO: " + playerWin + " x " + botWin);
+            } else if (playerWin < botWin) {
+                title.setText("VITORIA POR PONTUAÇÃO: " + playerWin + " x " + botWin);
             } else {
                 title.setText("EMPATE");
             }

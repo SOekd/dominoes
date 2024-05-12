@@ -188,16 +188,9 @@ public class GameView extends Scene {
                     Platform.runLater(this::update);
                 }
 
-                System.out.println("SCHEDULE!!!");
-
                 SCHEDULER.schedule(() -> {
                     Platform.runLater(() -> {
-                        System.out.println(" REMVOE TEST ");
-                        root.getChildren().forEach(it -> System.out.println(it.getClass()));
                         root.getChildren().remove(wait);
-                        System.out.println("AFTER");
-                        root.getChildren().forEach(it -> System.out.println(it.getClass()));
-                        System.out.println("REMOVED");
                     });
                 }, 2, TimeUnit.SECONDS);
 
@@ -273,7 +266,6 @@ public class GameView extends Scene {
             root.getChildren().add(skip);
 
             SCHEDULER.schedule(() -> Platform.runLater(() -> {
-                System.out.println(" REMVOE TEST ");
                 root.getChildren().remove(skip);
             }), 2, TimeUnit.SECONDS);
 
@@ -352,7 +344,6 @@ public class GameView extends Scene {
                 mouseBounds.setWidth(5);
                 root.getChildren().add(mouseBounds);
                 if (BoundsHandler.checkIntersection(mouseBounds, leftPhantomTile)) {
-                    System.out.println("Esquerda");
                     if (game.placeTile(game.getPlayer(), tileCard.getTile(), GameDirection.LEFT)) {
                         if (!game.changeTurn()) {
                             viewManager.setScoreView(new ScoreView(game, this.getWidth(), this.getHeight(), viewManager, game.getEndGameState()));
@@ -361,7 +352,6 @@ public class GameView extends Scene {
                         update();
                     }
                 } else if (BoundsHandler.checkIntersection(mouseBounds, rightPhantomTile)) {
-                    System.out.println("Direita");
                     if (game.placeTile(game.getPlayer(), tileCard.getTile(), GameDirection.RIGHT)) {
                         if (!game.changeTurn()) {
                             viewManager.setScoreView(new ScoreView(game, this.getWidth(), this.getHeight(), viewManager, game.getEndGameState()));
